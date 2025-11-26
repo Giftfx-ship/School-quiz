@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OGCNS QUIZE GAME - Made by Gift</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="container">
+    <header>
+      <img src="images/logo.png" alt="OGCNS Logo" class="logo">
+      <h1>OGCNS QUIZE GAME</h1>
+      <p class="subtitle">🎓 Practice Nursing Knowledge • No Repeats!</p>
+      <p class="motto">💉 Learn, Practice & Master Your Nursing Skills 💊</p>
+    </header>
+
+    <section id="startScreen" class="card floating-card">
+      <p>Welcome future nurse! Select your course and number of questions:</p>
+
+      <label for="category">Course:</label>
+      <select id="category">
+        <option value="all">All Courses</option>
+        <option value="GNS210">GNS 210 – Anatomy</option>
+        <option value="GNS211">GNS 211 – Foundation</option>
+        <option value="GNS212">GNS 212 – Med-Surg</option>
+        <option value="GNS213">GNS 213 – Primary Health</option>
+        <option value="GNS214">GNS 214 – Pharmacology</option>
+        <option value="GNS215">GNS 215 – Reproductive Health</option>
+        <option value="GST217">GST 217 – Research Methodology</option>
+      </select>
+
+      <label for="numQuestions">Number of questions:</label>
+      <input id="numQuestions" type="number" min="1" max="200" value="10">
+
+      <button id="startBtn" class="btn glow-btn">Start Quiz 🚀</button>
+    </section>
+
+    <section id="quizScreen" class="card hidden floating-card">
+      <div id="meta">Question <span id="currentNum">0</span> / <span id="totalNum">0</span></div>
+      <h2 id="question" class="animated-question">...</h2>
+      <div id="options" class="options"></div>
+
+      <div class="controls">
+        <button id="nextBtn" class="btn glow-btn hidden">Next ➡️</button>
+        <button id="quitBtn" class="btn alt-btn">Quit ❌</button>
+      </div>
+    </section>
+
+    <section id="resultScreen" class="card hidden floating-card">
+      <h2>🎉 Quiz Finished!</h2>
+      <p id="scoreText">You scored: 0 / 0</p>
+      <p class="encourage">Keep Practicing & Stay Sharp 🩺</p>
+      <button id="playAgainBtn" class="btn glow-btn">Play Again 🔄</button>
+    </section>
+
+    <footer>
+      OGCNS QUIZE GAME • Made by Gift • Developer: 2349164624021 • Chat on WhatsApp  
+      <br>Enjoy & Learn 👩‍⚕️👨‍⚕️
+    </footer>
+  </main>
+
+  <script src="questions.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
