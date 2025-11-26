@@ -1,7 +1,10 @@
+// OGCNS Quiz Game - script.js
+
 let pool = [];
 let currentIndex = 0;
 let score = 0;
 
+// DOM elements
 const startBtn = document.getElementById('startBtn');
 const startScreen = document.getElementById('startScreen');
 const quizScreen = document.getElementById('quizScreen');
@@ -17,15 +20,18 @@ const scoreText = document.getElementById('scoreText');
 const numQuestionsInput = document.getElementById('numQuestions');
 const categorySelect = document.getElementById('category');
 
+// Start the quiz
 function startQuiz() {
-  const requested = parseInt(numQuestionsInput.value,10) || 10;
+  const requested = parseInt(numQuestionsInput.value, 10) || 10;
   const cat = categorySelect.value;
 
-  let poolSrc = (cat==='all') ? questions : questions.filter(q=>q.category===cat);
-  if(poolSrc.length===0) poolSrc = questions;
+  let poolSrc = (cat === 'all') ? questions : questions.filter(q => q.category === cat);
+  if (poolSrc.length === 0) poolSrc = questions;
 
-  pool = shuffle(Array.from(poolSrc)).slice(0, Math.min(requested,poolSrc.length));
-  currentIndex=0; score=0;
+  // Shuffle and slice for requested length
+  pool = shuffle([...poolSrc]).slice(0, Math.min(requested, poolSrc.length));
+  currentIndex = 0;
+  score = 0;
 
   totalNum.textContent = pool.length;
   startScreen.classList.add('hidden');
@@ -35,47 +41,91 @@ function startQuiz() {
   showQuestion();
 }
 
+// Display a question
 function showQuestion() {
   const q = pool[currentIndex];
-  currentNum.textContent = currentIndex+1;
+  currentNum.textContent = currentIndex + 1;
   questionEl.textContent = q.q;
-  optionsEl.innerHTML='';
+  optionsEl.innerHTML = '';
 
-  q.options.forEach((opt,i)=>{
-    const b=document.createElement('button');
-    b.className='optionBtn';
-    b.textContent=opt;
-    b.onclick=()=>selectOption(i,b,q.answer);
+  // Animate question text
+  questionEl.classList.add('animated-question');
+  setTimeout(() => questionEl.classList.remove('animated-question'), 600);
+
+  q.options.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'optionBtn';
+    b.textContent = opt;
+    b.onclick = () => selectOption(i, b, q.answer);
     optionsEl.appendChild(b);
   });
 
   nextBtn.classList.add('hidden');
 }
 
-function selectOption(i,btn,correctIndex){
-  document.querySelectorAll('.optionBtn').forEach(b=>b.classList.add('disabled'));
-  if(i===correctIndex){ btn.classList.add('correct'); score++; }
-  else { btn.classList.add('wrong'); document.querySelectorAll('.optionBtn')[correctIndex].classList.add('correct'); }
+// Handle answer selection
+function selectOption(selectedIndex, btn, correctIndex) {
+  const allBtns = document.querySelectorAll('.optionBtn');
+  allBtns.forEach(b => b.classList.add('disabled'));
+
+  if (selectedIndex === correctIndex) {
+    btn.classList.add('correct');
+    btn.classList.add('glow-btn');
+    score++;
+  } else {
+    btn.classList.add('wrong');
+    if (allBtns[correctIndex]) {
+      allBtns[correctIndex].classList.add('correct');
+      allBtns[correctIndex].classList.add('glow-btn');
+    }
+  }
+
+  // Add a slight animation effect
+  btn.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.05)' }, { transform: 'scale(1)' }], { duration: 400 });
   nextBtn.classList.remove('hidden');
 }
 
+// Go to next question
 function next() {
   currentIndex++;
-  if(currentIndex>=pool.length) finishQuiz();
+  if (currentIndex >= pool.length) finishQuiz();
   else showQuestion();
 }
 
+// Finish quiz and show score
 function finishQuiz() {
   quizScreen.classList.add('hidden');
   resultScreen.classList.remove('hidden');
+
   scoreText.textContent = `You scored: ${score} / ${pool.length}`;
+  scoreText.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 800 });
 }
 
-function playAgain() { startScreen.classList.remove('hidden'); resultScreen.classList.add('hidden'); }
-function quit() { playAgain(); }
-function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+// Play again
+function playAgain() {
+  startScreen.classList.remove('hidden');
+  resultScreen.classList.add('hidden');
+}
 
-startBtn.addEventListener('click',startQuiz);
-nextBtn.addEventListener('click',next);
-quitBtn.addEventListener('click',quit);
-playAgainBtn.addEventListener('click',playAgain);
+// Quit quiz
+function quit() {
+  playAgain();
+}
+
+// Shuffle array
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// Event listeners
+startBtn.addEventListener('click', startQuiz);
+nextBtn.addEventListener('click', next);
+quitBtn.addEventListener('click', quit);
+playAgainBtn.addEventListener('click', playAgain);
+
+// Optional: floating background animation
+document.body.style.background = 'linear-gradient(135deg, #00c6ff, #0072ff)';
