@@ -1,8 +1,8 @@
 /* app.js
-   Single-page UI + client-side auth (localStorage) + AI-quiz integration via Vercel serverless function
+   Single-page UI + client-side auth + AI-quiz integration via Vercel serverless
 */
 
-// Simple client state
+// ------------------ State ------------------
 const state = {
   user: JSON.parse(localStorage.getItem("ogn_user") || "null"),
   token: localStorage.getItem("ogn_token") || null,
@@ -11,7 +11,7 @@ const state = {
   answers: {}
 };
 
-// DOM refs
+// ------------------ DOM Refs ------------------
 const openAuthBtn = document.getElementById("openAuthBtn");
 const authModal = document.getElementById("authModal");
 const closeAuth = document.getElementById("closeAuth");
@@ -37,7 +37,7 @@ const nextBtn = document.getElementById("nextBtn");
 const finishBtn = document.getElementById("finishBtn");
 const resultsEl = document.getElementById("results");
 
-// UI init
+// ------------------ UI ------------------
 function refreshUI(){
   if (state.user) {
     userDisplay.textContent = state.user.name || state.user.email;
@@ -49,13 +49,20 @@ function refreshUI(){
 }
 refreshUI();
 
-// Auth modal handlers
-openAuthBtn.onclick = () => { authModal.classList.remove("hidden"); authModal.setAttribute("aria-hidden", "false"); }
-closeAuth.onclick = () => { authModal.classList.add("hidden"); authModal.setAttribute("aria-hidden","true"); }
-tabLogin.onclick = () => { tabLogin.classList.add("active"); tabSignup.classList.remove("active"); loginForm.classList.remove("hidden"); signupForm.classList.add("hidden"); }
-tabSignup.onclick = () => { tabSignup.classList.add("active"); tabLogin.classList.remove("active"); signupForm.classList.remove("hidden"); loginForm.classList.add("hidden"); }
+// ------------------ Auth Modal ------------------
+openAuthBtn.onclick = () => { authModal.classList.remove("hidden"); }
+closeAuth.onclick = () => { authModal.classList.add("hidden"); }
 
-// Signup (localStorage)
+tabLogin.onclick = () => {
+  tabLogin.classList.add("active"); tabSignup.classList.remove("active");
+  loginForm.classList.remove("hidden"); signupForm.classList.add("hidden");
+}
+tabSignup.onclick = () => {
+  tabSignup.classList.add("active"); tabLogin.classList.remove("active");
+  signupForm.classList.remove("hidden"); loginForm.classList.add("hidden");
+}
+
+// Signup
 btnSignup.onclick = () => {
   const name = document.getElementById("signupName").value.trim();
   const email = document.getElementById("signupEmail").value.trim();
@@ -68,12 +75,12 @@ btnSignup.onclick = () => {
   localStorage.setItem("ogn_user", JSON.stringify(user));
   localStorage.setItem("ogn_token", "local-ghost-token");
   state.user = user;
+  refreshUI();
   alert("Account created! Welcome 🎉");
   authModal.classList.add("hidden");
-  refreshUI();
 };
 
-// Login (localStorage)
+// Login
 btnLogin.onclick = () => {
   const email = document.getElementById("loginEmail").value.trim();
   const pass = document.getElementById("loginPass").value;
@@ -82,9 +89,9 @@ btnLogin.onclick = () => {
   if (email === user.email && pass === user.pass) {
     localStorage.setItem("ogn_token", "local-ghost-token");
     state.user = user;
+    refreshUI(); // fixed refresh
     alert("Login successful! Good luck ✨");
     authModal.classList.add("hidden");
-    refreshUI();
   } else alert("Incorrect email or password.");
 };
 
@@ -94,16 +101,9 @@ if (startNowBtn) startNowBtn.onclick = () => {
   tabSignup.click();
 };
 
-// -------------------------
-// Quiz generation via OpenAI API (serverless on Vercel)
-// -------------------------
+// ------------------ Quiz Generation ------------------
 generateBtn.onclick = async () => {
-  if (!state.user) {
-    alert("Please login or sign up to generate quizzes.");
-    authModal.classList.remove("hidden");
-    return;
-  }
-
+  if (!state.user) { authModal.classList.remove("hidden"); return; }
   const course = courseSelect.value;
   const n = Math.max(1, Math.min(20, parseInt(numQ.value || "10")));
   generateBtn.disabled = true;
@@ -112,16 +112,11 @@ generateBtn.onclick = async () => {
   try {
     const resp = await fetch("/api/generate-quiz", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {"Content-Type":"application/json"},
       body: JSON.stringify({ course, numQuestions: n })
     });
     const data = await resp.json();
-    if (!data.questions || data.questions.length === 0) {
-      alert("No questions generated. Try again.");
-      generateBtn.disabled = false;
-      generateBtn.textContent = "Generate Quiz (AI)";
-      return;
-    }
+    if (!data.questions || data.questions.length === 0) throw new Error("No questions generated");
     state.questions = data.questions;
     state.current = 0;
     state.answers = {};
@@ -136,61 +131,67 @@ generateBtn.onclick = async () => {
   generateBtn.textContent = "Generate Quiz (AI)";
 };
 
-// Render a question
+// Render Question
 function renderQuestion(){
   const q = state.questions[state.current];
   if (!q) return;
   qHeader.textContent = `Question ${state.current+1} of ${state.questions.length}`;
   qText.textContent = q.question;
   optionsEl.innerHTML = "";
-  for (const key of Object.keys(q.options)){
+  for(const key of Object.keys(q.options)){
     const div = document.createElement("div");
-    div.className = "opt" + (state.answers[state.current] === key ? " selected" : "");
+    div.className = "opt" + (state.answers[state.current]===key ? " selected":"");
     div.innerHTML = `<strong>${key}.</strong> ${q.options[key]}`;
-    div.onclick = () => {
-      state.answers[state.current] = key;
-      renderQuestion();
-    };
+    div.onclick = () => { state.answers[state.current]=key; renderQuestion(); };
     optionsEl.appendChild(div);
   }
-  prevBtn.disabled = state.current === 0;
-  nextBtn.disabled = state.current === state.questions.length - 1;
+  prevBtn.disabled = state.current===0;
+  nextBtn.disabled = state.current===state.questions.length-1;
 }
 
-// Prev / Next
-prevBtn.onclick = () => { if (state.current>0){ state.current--; renderQuestion(); } };
-nextBtn.onclick = () => { if (state.current < state.questions.length-1){ state.current++; renderQuestion(); } };
+// Prev/Next
+prevBtn.onclick = ()=>{if(state.current>0){state.current--; renderQuestion();}};
+nextBtn.onclick = ()=>{if(state.current<state.questions.length-1){state.current++; renderQuestion();}};
 
-// Finish and show results
+// Finish Quiz
 finishBtn.onclick = () => {
-  if (!state.questions || state.questions.length === 0) return;
-  let correct = 0;
-  const details = [];
+  if(!state.questions || !state.questions.length) return;
+  let correct = 0; const details=[];
   state.questions.forEach((q,i)=>{
     const chosen = state.answers[i] || null;
-    const ok = chosen === q.answer;
-    if (ok) correct++;
-    details.push({ q: q.question, chosen, answer: q.answer, explanation: q.explanation });
+    if(chosen===q.answer) correct++;
+    details.push({q:q.question, chosen, answer:q.answer, explanation:q.explanation});
   });
-
   resultsEl.classList.remove("hidden");
   resultsEl.innerHTML = `<h3>Your score: ${correct} / ${state.questions.length}</h3>`;
-  details.forEach((d, idx) => {
-    const el = document.createElement("div");
-    el.className = "card";
-    el.style.marginTop = "10px";
-    el.innerHTML = `<strong>Q${idx+1}:</strong> ${d.q}
-      <div>Answer: ${d.answer} — Your choice: ${d.chosen || "—"}</div>
-      <div style="margin-top:6px;font-style:italic;color:#bcd">${d.explanation || ""}</div>`;
+  details.forEach((d,i)=>{
+    const el=document.createElement("div");
+    el.className="card"; el.style.marginTop="10px";
+    el.innerHTML=`<strong>Q${i+1}:</strong> ${d.q}
+      <div>Answer: ${d.answer} — Your choice: ${d.chosen||"—"}</div>
+      <div style="margin-top:6px;font-style:italic;color:#bcd">${d.explanation||""}</div>`;
     resultsEl.appendChild(el);
   });
-
   quizArea.classList.add("hidden");
 };
 
-// Helper: logout
+// ------------------ Logout ------------------
 function logout(){
   localStorage.removeItem("ogn_token");
   state.user = null;
   refreshUI();
 }
+
+// ------------------ Floating Emojis ------------------
+const emojis = ["💉","🩺","👩‍⚕️","🏥","🧬"];
+function createFloatingEmoji(){
+  const span = document.createElement("span");
+  span.className="floating-emoji";
+  span.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+  span.style.left=Math.random()*90+"vw";
+  span.style.fontSize=(16+Math.random()*24)+"px";
+  span.style.animationDuration=(3+Math.random()*4)+"s";
+  document.body.appendChild(span);
+  setTimeout(()=>span.remove(),7000);
+}
+setInterval(createFloatingEmoji,500);
