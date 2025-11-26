@@ -18,11 +18,11 @@ export default async function handler(req, res) {
     const n = Math.min(Math.max(parseInt(numQuestions, 10), 1), 20);
 
     const prompt = `
-      Create ${n} multiple choice questions for the nursing course: ${course}.
+      Create exactly ${n} multiple choice questions for the nursing course: "${course}".
       Each question must have 4 options labeled A, B, C, D.
       Do NOT show the correct answer to the user upfront.
       Include a short explanation or hint for each question.
-      Return strictly a JSON array like:
+      Return ONLY a valid JSON array without extra text or formatting, like:
       [
         {
           "question": "...",
@@ -39,12 +39,15 @@ export default async function handler(req, res) {
       temperature: 0.7
     });
 
-    let questions = [];
     const text = completion.choices[0].message.content.trim();
+    let questions = [];
 
+    // Attempt to extract JSON even if GPT added extra text
     try {
-      questions = JSON.parse(text);
-      if (!Array.isArray(questions)) throw new Error("AI did not return an array");
+      const jsonMatch = text.match(/\[.*\]/s); // match the first JSON array in the response
+      if (!jsonMatch) throw new Error("No JSON array found in AI response");
+      questions = JSON.parse(jsonMatch[0]);
+      if (!Array.isArray(questions)) throw new Error("Parsed JSON is not an array");
     } catch (err) {
       console.error("Error parsing AI response:", err, "\nResponse text:", text);
       questions = [{
@@ -60,7 +63,7 @@ export default async function handler(req, res) {
       question: q.question,
       options: q.options,
       explanation: q.explanation,
-      _answer: q.answer // keep it hidden internally
+      _answer: q.answer // keep hidden internally
     }));
 
     return res.status(200).json({ questions: frontendQuestions });
