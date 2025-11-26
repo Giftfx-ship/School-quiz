@@ -1,174 +1,126 @@
-/* Root colors */
-:root {
-  --bg-gradient-1: #00c6ff;
-  --bg-gradient-2: #0072ff;
-  --card-bg: #ffffffdd;
-  --accent: #ff6a00;
-  --accent-light: #ffb347;
-  --success: #28a745;
-  --danger: #dc3545;
-  --text-dark: #1e1e2f;
-  --shadow: rgba(0, 0, 0, 0.15);
-}
-
-/* Global */
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* ========= GLOBAL + COMBINED ABC THEME ========= */
 body {
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, var(--bg-gradient-1), var(--bg-gradient-2));
-  min-height: 100vh;
-  color: var(--text-dark);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #ffffff, #c2e0ff, #001f4d);
+    background-size: 300% 300%;
+    animation: bgMove 12s infinite alternate;
+    overflow-x: hidden;
 }
 
-/* Container */
+@keyframes bgMove {
+    0% { background-position: left; }
+    100% { background-position: right; }
+}
+
 .container {
-  max-width: 900px;
-  width: 90%;
-  padding: 20px;
-  text-align: center;
-  position: relative;
+    max-width: 480px;
+    margin: auto;
+    padding: 20px;
+    text-align: center;
 }
 
-/* Header */
-header {
-  margin-bottom: 25px;
-}
-header .logo {
-  width: 80px;
-  height: auto;
-  margin-bottom: 10px;
-  animation: bounce 2s infinite;
-}
 h1 {
-  font-size: 2.5rem;
-  background: linear-gradient(90deg, #ff6a00, #ffb347);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: gradientMove 5s infinite linear;
-}
-.subtitle, .motto {
-  margin-top: 5px;
-  font-size: 1.1rem;
-  color: #f2f2f2;
+    font-size: 28px;
+    font-weight: 800;
+    color: #003f88;
 }
 
-/* Card style */
-.card {
-  background: var(--card-bg);
-  border-radius: 15px;
-  box-shadow: 0 10px 25px var(--shadow);
-  padding: 25px;
-  margin: 15px 0;
-  position: relative;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px var(--shadow);
+.subtitle {
+    font-size: 14px;
+    color: #003060;
+    margin-bottom: 20px;
 }
 
-/* Floating card animation */
-.floating-card {
-  animation: float 6s ease-in-out infinite;
+/* ========= SELECTOR CARD ========= */
+.selector-card {
+    background: #ffffffdd;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px #0002;
+    margin-bottom: 20px;
 }
 
-/* Buttons */
-.btn {
-  display: inline-block;
-  padding: 12px 20px;
-  margin-top: 12px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-.glow-btn {
-  background: linear-gradient(90deg, var(--accent), var(--accent-light));
-  color: white;
-  box-shadow: 0 0 20px var(--accent-light);
-  animation: glow 2s infinite alternate;
-}
-.glow-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 30px var(--accent);
-}
-.alt-btn {
-  background: #ccc;
-  color: #333;
+.selector-card select,
+.selector-card input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 15px;
+    border-radius: 8px;
+    border: 2px solid #0077ff;
 }
 
-/* Quiz options */
-.options {
-  display: grid;
-  gap: 12px;
-  margin-top: 15px;
-}
-.optionBtn {
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  background: #f8f8ff;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-.optionBtn:hover {
-  transform: scale(1.03);
-  background: #f0f8ff;
-}
-.optionBtn.disabled {
-  pointer-events: none;
-  opacity: 0.6;
-}
-.optionBtn.correct {
-  background: rgba(40, 167, 69, 0.2);
-  border-color: var(--success);
-}
-.optionBtn.wrong {
-  background: rgba(220, 53, 69, 0.2);
-  border-color: var(--danger);
+button {
+    padding: 12px 18px;
+    background: #0055ff;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
-/* Controls */
-.controls {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
-@media (max-width: 520px) {
-  .controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
+button:hover {
+    transform: scale(1.05);
+    background: #003dcc;
 }
 
-/* Footer */
-footer {
-  margin-top: 30px;
-  font-size: 14px;
-  color: #fff;
+/* ========= QUIZ BOX ========= */
+.quiz-box {
+    background: #ffffffdd;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px #0002;
 }
 
-/* Animations */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+#options button {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    background: #eaf2ff;
+    color: #003060;
 }
-@keyframes glow {
-  0% { box-shadow: 0 0 10px var(--accent-light); }
-  100% { box-shadow: 0 0 30px var(--accent); }
+
+#options button:hover {
+    background: #d2e1ff;
 }
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-15px); }
+
+.hidden { display: none; }
+
+.result-box {
+    background: #ffffffdd;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px #0002;
+    margin-top: 20px;
 }
-@keyframes gradientMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-    }
+
+.footer {
+    margin-top: 20px;
+    font-size: 13px;
+    color: #222;
+}
+
+/* ========= FLOATING NURSING ICONS ========= */
+.floating-icons span {
+    position: fixed;
+    bottom: -50px;
+    font-size: 30px;
+    opacity: 0.7;
+    animation: floatUp 10s linear infinite;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0.2; }
+    100% { transform: translateY(-120vh) rotate(360deg); opacity: 1; }
+}
+
+/* Random positions */
+.floating-icons span:nth-child(1) { left: 5%; animation-delay: 0s; }
+.floating-icons span:nth-child(2) { left: 20%; animation-delay: 2s; }
+.floating-icons span:nth-child(3) { left: 40%; animation-delay: 4s; }
+.floating-icons span:nth-child(4) { left: 60%; animation-delay: 1s; }
+.floating-icons span:nth-child(5) { left: 75%; animation-delay: 3s; }
+.floating-icons span:nth-child(6) { left: 90%; animation-delay: 5s; }
