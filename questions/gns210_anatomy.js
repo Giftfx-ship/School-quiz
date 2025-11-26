@@ -1,6 +1,6 @@
-[
+const questions = [
   {
-    "question": "Which organ is the largest in the human body?",
+    question: "Which organ is the largest in the human body?",
     "options": { "A": "Heart", "B": "Liver", "C": "Skin", "D": "Lungs" },
     "_answer": "C",
     "explanation": "The skin is the largest organ by surface area."
@@ -311,4 +311,7 @@
     "_answer": "A",
     "explanation": "The pancreas produces enzymes for digestion and insulin for metabolism."
   }
-]
+];
+
+export default questions;
+
