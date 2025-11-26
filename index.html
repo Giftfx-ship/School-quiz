@@ -1,63 +1,168 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OGCNS Quiz Game</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ogbomoso College of Nursing — Smart Quiz Portal</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="theme">
 
-    <!-- Floating Nursing Icons Animation -->
-    <div class="floating-icons">
-        <span>🩺</span>
-        <span>💊</span>
-        <span>🩹</span>
-        <span>📚</span>
-        <span>🧪</span>
-        <span>🩻</span>
+  <!-- Floating emoji strip -->
+  <div class="floating-emojis" aria-hidden="true">
+    <span>🩺</span><span>📚</span><span>👩‍⚕️</span><span>🎓</span><span>❤️</span><span>✨</span>
+  </div>
+
+  <header class="site-header">
+    <div class="nav">
+      <div class="brand">
+        <img src="public/images/logo.png" class="logo" alt="Ogbomoso College logo">
+        <div>
+          <h1>Ogbomoso College of Nursing</h1>
+          <div class="tag">Smart Quiz Portal — Practice. Improve. Pass.</div>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <span id="userDisplay" class="user-display"></span>
+        <button id="openAuthBtn" class="btn ghost">Login / Sign up</button>
+      </div>
     </div>
 
-    <div class="container">
-        <h1>OGCNS QUIZ GAME</h1>
-        <p class="subtitle">Learn • Practice • Master Your Nursing Skills</p>
+    <div class="hero">
+      <div class="hero-left">
+        <h2>Exam-ready practice, powered by AI.</h2>
+        <p class="lead">
+          Get instant, exam-style multiple choice questions for your GNS & GST courses.
+          Tailored quizzes, clear explanations, and a simple CBT-style interface.
+        </p>
 
-        <div class="selector-card">
-            <label>Course:</label>
-            <select id="course">
-                <option value="gns212">GNS 212 – Med-Surg</option>
-                <option value="gns210">GNS 210 – Anatomy</option>
-            </select>
+        <ul class="benefits">
+          <li>Auto-generated, high-quality MCQs for each course</li>
+          <li>Timer-ready — simulate real CBT conditions</li>
+          <li>Track attempts (client side) and review explanations</li>
+        </ul>
 
-            <label>Number of Questions:</label>
-            <input id="num" type="number" min="1" max="100" value="10">
-
-            <button id="start">Start Quiz 🚀</button>
+        <div class="hero-ctas">
+          <a href="#quiz" class="btn" id="startNowBtn">Start practicing</a>
+          <a href="#how" class="btn ghost">How it works</a>
         </div>
+      </div>
 
-        <div id="quizBox" class="quiz-box hidden">
-            <h2 id="question"></h2>
-            <div id="options"></div>
-
-            <p id="progress"></p>
-
-            <div class="buttons">
-                <button id="next">Next ➡️</button>
-                <button id="quit">Quit ❌</button>
-            </div>
+      <div class="hero-right">
+        <div class="floating-nurse">
+          <img src="public/images/nurse-anim.svg" alt="" />
         </div>
-
-        <div id="result" class="result-box hidden">
-            <h2>🎉 Quiz Finished!</h2>
-            <p id="scoreText"></p>
-
-            <button onclick="location.reload()">Play Again 🔄</button>
-
-            <p class="footer">OGCNS QUIZ GAME • Made by Gift<br>
-            Developer: 2349164624021</p>
+        <div class="hero-card">
+          <h3>Motivation</h3>
+          <p><strong>Blessings.</strong> Study small, study daily. Your future patients will thank you.</p>
         </div>
+      </div>
     </div>
+  </header>
 
-    <script src="script.js"></script>
+  <main id="main" class="main">
+    <section id="quiz" class="card">
+      <h2>Take a quiz</h2>
+      <p class="muted">Pick a course below; the system will generate practice questions for you.</p>
+
+      <div class="controls">
+        <label class="label">Course
+          <select id="courseSelect">
+            <option>GNS 210 – Anatomy</option>
+            <option>GNS 211 – Foundations of Nursing</option>
+            <option>GNS 212 – Medical–Surgical Nursing</option>
+            <option>GNS 213 – Primary Health Care</option>
+            <option>GNS 214 – Pharmacology</option>
+            <option>GNS 215 – Reproductive Health</option>
+            <option>GST 216 – Biostatistics</option>
+            <option>GST 217 – Research Methodology</option>
+          </select>
+        </label>
+
+        <label class="label">Questions
+          <input id="numQ" type="number" min="1" max="20" value="10">
+        </label>
+
+        <button id="generateBtn" class="btn primary">Generate Quiz (AI)</button>
+      </div>
+
+      <div id="quizArea" class="quiz-area hidden">
+        <div id="qHeader" class="qheader"></div>
+        <div id="qText" class="qtext"></div>
+        <div id="options" class="options"></div>
+
+        <div class="quiz-controls">
+          <button id="prevBtn" class="btn ghost small">Previous</button>
+          <button id="nextBtn" class="btn ghost small">Next</button>
+          <button id="finishBtn" class="btn small">Finish & Score</button>
+        </div>
+      </div>
+
+      <div id="results" class="results hidden"></div>
+    </section>
+
+    <section id="how" class="card">
+      <h2>How it works</h2>
+      <ol>
+        <li>Create a free account (email + phone) — no payment required.</li>
+        <li>Pick a course and the number of questions, then click <strong>Generate Quiz</strong>.</li>
+        <li>The AI generates exam-style MCQs with explanations — answer them and review your score.</li>
+      </ol>
+
+      <p class="pro-tip"><strong>Pro tip:</strong> Practice in 30–60 minute sessions, review explanations, and repeat weaker topics.</p>
+    </section>
+
+    <section class="card faq">
+      <h2>Why use this portal?</h2>
+      <p>
+        This portal creates focused practice for the core GNS and GST courses. Questions are written
+        to resemble common CBT formats and include short explanations so you learn while you practice.
+      </p>
+    </section>
+  </main>
+
+  <!-- Auth modal (signup / login) -->
+  <div id="authModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" id="closeAuth">&times;</button>
+      <div class="auth-tabs">
+        <button id="tabLogin" class="tab active">Login</button>
+        <button id="tabSignup" class="tab">Sign up</button>
+      </div>
+
+      <div id="loginForm" class="auth-form">
+        <input id="loginEmail" type="email" placeholder="Email">
+        <input id="loginPass" type="password" placeholder="Password">
+        <button id="btnLogin" class="btn primary">Login</button>
+      </div>
+
+      <div id="signupForm" class="auth-form hidden">
+        <input id="signupName" type="text" placeholder="Full name (optional)">
+        <input id="signupEmail" type="email" placeholder="Email">
+        <input id="signupPhone" type="text" placeholder="Phone number">
+        <input id="signupPass" type="password" placeholder="Password">
+        <button id="btnSignup" class="btn primary">Create account — Free</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-left">
+      <p><strong>made by Gift</strong></p>
+      <p>ajeh: <em>enjoy</em></p>
+    </div>
+    <div class="footer-right">
+      <p>Developer: Gift fx — <a id="waLink" href="https://wa.me/2349164624021" target="_blank">Chat on WhatsApp</a></p>
+      <p class="muted">Contact: +2349164624021</p>
+    </div>
+  </footer>
+
+  <!-- floating Whatsapp quick chat -->
+  <a id="whatsBtn" class="whats-btn" href="https://wa.me/2349164624021?text=Hello%20Mr%20Dev%2C%20I%20need%20help%20with%20the%20Quiz%20Portal.%20Blessings!" target="_blank" aria-label="Chat on WhatsApp">
+    <img src="public/images/whatsapp-icon.png" alt="WhatsApp" />
+  </a>
+
+  <script src="app.js"></script>
 </body>
-          </html>
+</html>
