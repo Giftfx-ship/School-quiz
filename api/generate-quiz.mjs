@@ -1,18 +1,19 @@
-// /api/generate-quiz.js
-const OpenAI = require("openai");
+// /api/generate-quiz.mjs
+import OpenAI from "openai";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
     const { course, numQuestions } = req.body;
-    if (!course || !numQuestions) return res.status(400).json({ error: "Missing course or numQuestions" });
+    if (!course || !numQuestions)
+      return res.status(400).json({ error: "Missing course or numQuestions" });
 
     const n = Math.min(Math.max(parseInt(numQuestions, 10), 1), 20);
 
@@ -68,4 +69,4 @@ module.exports = async function handler(req, res) {
     console.error("Server error:", err);
     return res.status(500).json({ error: "Server error", detail: err.message });
   }
-};
+}
