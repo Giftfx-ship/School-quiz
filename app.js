@@ -8,6 +8,7 @@ const state = {
 };
 
 // ------------------ DOM Refs ------------------
+// Separate modals for pro style
 const loginModal = document.getElementById("loginModal");
 const signupModal = document.getElementById("signupModal");
 const openLoginBtn = document.getElementById("openLoginBtn");
@@ -33,7 +34,7 @@ const finishBtn = document.getElementById("finishBtn");
 const resultsEl = document.getElementById("results");
 
 // ------------------ UI Refresh ------------------
-function refreshUI(){
+function refreshUI() {
   if(state.user){
     userDisplay.textContent = state.user.name || state.user.email;
     openLoginBtn.style.display = "none";
@@ -49,13 +50,13 @@ function refreshUI(){
 refreshUI();
 
 // ------------------ Modals ------------------
-openLoginBtn.onclick = ()=> loginModal.classList.remove("hidden");
-openSignupBtn.onclick = ()=> signupModal.classList.remove("hidden");
-closeLogin.onclick = ()=> loginModal.classList.add("hidden");
-closeSignup.onclick = ()=> signupModal.classList.add("hidden");
+openLoginBtn.onclick = () => loginModal.classList.remove("hidden");
+openSignupBtn.onclick = () => signupModal.classList.remove("hidden");
+closeLogin.onclick = () => loginModal.classList.add("hidden");
+closeSignup.onclick = () => signupModal.classList.add("hidden");
 
 // ------------------ Signup ------------------
-btnSignup.onclick = ()=>{
+btnSignup.onclick = () => {
   const name = document.getElementById("signupName").value.trim();
   const email = document.getElementById("signupEmail").value.trim();
   const phone = document.getElementById("signupPhone").value.trim();
@@ -78,7 +79,7 @@ btnSignup.onclick = ()=>{
 };
 
 // ------------------ Login ------------------
-btnLogin.onclick = ()=>{
+btnLogin.onclick = () => {
   const email = document.getElementById("loginEmail").value.trim();
   const pass = document.getElementById("loginPass").value;
   const user = JSON.parse(localStorage.getItem("ogn_user") || "null");
@@ -98,7 +99,7 @@ btnLogin.onclick = ()=>{
 };
 
 // ------------------ Logout ------------------
-logoutBtn.onclick = ()=>{
+logoutBtn.onclick = () => {
   localStorage.removeItem("ogn_token");
   state.user = null;
   refreshUI();
