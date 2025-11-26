@@ -3,9 +3,17 @@
   "version": "1.0.0",
   "type": "module",
   "engines": {
-    "node": "24.x"
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "dependencies": {
-    "openai": "^4.0.0"
+    "openai": "^4.0.0",
+    "node-fetch": "^3.4.1"  // Required if using fetch in Node 24+
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
