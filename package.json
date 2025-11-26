@@ -1,0 +1,15 @@
+{
+  "name": "ogcns-school-quiz",
+  "version": "1.0.0",
+  "description": "AI Nursing Quiz Generator",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "openai": "^4.9.0"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
