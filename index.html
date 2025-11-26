@@ -1,66 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OGCNS QUIZE GAME - Made by Gift</title>
-<link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OGCNS Quiz Game</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="container">
-    <header>
-      <img src="images/logo.png" alt="OGCNS Logo" class="logo">
-      <h1>OGCNS QUIZE GAME</h1>
-      <p class="subtitle">🎓 Practice Nursing Knowledge • No Repeats!</p>
-      <p class="motto">💉 Learn, Practice & Master Your Nursing Skills 💊</p>
-    </header>
 
-    <section id="startScreen" class="card floating-card">
-      <p>Welcome future nurse! Select your course and number of questions:</p>
+    <!-- Floating Nursing Icons Animation -->
+    <div class="floating-icons">
+        <span>🩺</span>
+        <span>💊</span>
+        <span>🩹</span>
+        <span>📚</span>
+        <span>🧪</span>
+        <span>🩻</span>
+    </div>
 
-      <label for="category">Course:</label>
-      <select id="category">
-        <option value="all">All Courses</option>
-        <option value="GNS210">GNS 210 – Anatomy</option>
-        <option value="GNS211">GNS 211 – Foundation</option>
-        <option value="GNS212">GNS 212 – Med-Surg</option>
-        <option value="GNS213">GNS 213 – Primary Health</option>
-        <option value="GNS214">GNS 214 – Pharmacology</option>
-        <option value="GNS215">GNS 215 – Reproductive Health</option>
-        <option value="GST217">GST 217 – Research Methodology</option>
-      </select>
+    <div class="container">
+        <h1>OGCNS QUIZ GAME</h1>
+        <p class="subtitle">Learn • Practice • Master Your Nursing Skills</p>
 
-      <label for="numQuestions">Number of questions:</label>
-      <input id="numQuestions" type="number" min="1" max="200" value="10">
+        <div class="selector-card">
+            <label>Course:</label>
+            <select id="course">
+                <option value="gns212">GNS 212 – Med-Surg</option>
+                <option value="gns210">GNS 210 – Anatomy</option>
+            </select>
 
-      <button id="startBtn" class="btn glow-btn">Start Quiz 🚀</button>
-    </section>
+            <label>Number of Questions:</label>
+            <input id="num" type="number" min="1" max="100" value="10">
 
-    <section id="quizScreen" class="card hidden floating-card">
-      <div id="meta">Question <span id="currentNum">0</span> / <span id="totalNum">0</span></div>
-      <h2 id="question" class="animated-question">...</h2>
-      <div id="options" class="options"></div>
+            <button id="start">Start Quiz 🚀</button>
+        </div>
 
-      <div class="controls">
-        <button id="nextBtn" class="btn glow-btn hidden">Next ➡️</button>
-        <button id="quitBtn" class="btn alt-btn">Quit ❌</button>
-      </div>
-    </section>
+        <div id="quizBox" class="quiz-box hidden">
+            <h2 id="question"></h2>
+            <div id="options"></div>
 
-    <section id="resultScreen" class="card hidden floating-card">
-      <h2>🎉 Quiz Finished!</h2>
-      <p id="scoreText">You scored: 0 / 0</p>
-      <p class="encourage">Keep Practicing & Stay Sharp 🩺</p>
-      <button id="playAgainBtn" class="btn glow-btn">Play Again 🔄</button>
-    </section>
+            <p id="progress"></p>
 
-    <footer>
-      OGCNS QUIZE GAME • Made by Gift • Developer: 2349164624021 • Chat on WhatsApp  
-      <br>Enjoy & Learn 👩‍⚕️👨‍⚕️
-    </footer>
-  </main>
+            <div class="buttons">
+                <button id="next">Next ➡️</button>
+                <button id="quit">Quit ❌</button>
+            </div>
+        </div>
 
-  <script src="questions.js"></script>
-  <script src="script.js"></script>
+        <div id="result" class="result-box hidden">
+            <h2>🎉 Quiz Finished!</h2>
+            <p id="scoreText"></p>
+
+            <button onclick="location.reload()">Play Again 🔄</button>
+
+            <p class="footer">OGCNS QUIZ GAME • Made by Gift<br>
+            Developer: 2349164624021</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
-</html>
+          </html>
