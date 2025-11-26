@@ -1,10 +1,4 @@
 // /api/generate-quiz.mjs
-import OpenAI from "openai";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -33,29 +27,48 @@ export default async function handler(req, res) {
       ]
     `;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.7
+    // OpenAssistant public API endpoint
+    const response = await fetch("https://api.open-assistant.io/conversation", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ input: prompt })
     });
 
-    const text = completion.choices[0].message.content.trim();
-    let questions = [];
+    const data = await response.json();
+    const text = data.output?.[0]?.content?.[0]?.text || "";
 
-    // Attempt to extract JSON even if GPT added extra text
+    let questions = [];
     try {
-      const jsonMatch = text.match(/\[.*\]/s); // match the first JSON array in the response
-      if (!jsonMatch) throw new Error("No JSON array found in AI response");
-      questions = JSON.parse(jsonMatch[0]);
+      const jsonMatch = text.match(/\[.*\]/s);
+      if (jsonMatch) {
+        questions = JSON.parse(jsonMatch[0]);
+      }
+
+      // Ensure questions array is valid
       if (!Array.isArray(questions)) throw new Error("Parsed JSON is not an array");
+
+      // Fill in missing questions if AI returned less
+      while (questions.length < n) {
+        questions.push({
+          question: "Placeholder question",
+          options: { A: "Option A", B: "Option B", C: "Option C", D: "Option D" },
+          answer: "A",
+          explanation: "This is a placeholder question."
+        });
+      }
+
+      // Trim extra questions if AI returned more
+      questions = questions.slice(0, n);
+
     } catch (err) {
       console.error("Error parsing AI response:", err, "\nResponse text:", text);
-      questions = [{
-        question: "Error parsing AI response",
-        options: { A: "", B: "", C: "", D: "" },
-        answer: "",
-        explanation: "The AI response could not be parsed as JSON."
-      }];
+      // Fallback: generate n placeholder questions
+      questions = Array.from({ length: n }, (_, i) => ({
+        question: `Placeholder question ${i + 1}`,
+        options: { A: "Option A", B: "Option B", C: "Option C", D: "Option D" },
+        answer: "A",
+        explanation: "This is a placeholder question."
+      }));
     }
 
     // Strip answers before sending to frontend
@@ -63,7 +76,7 @@ export default async function handler(req, res) {
       question: q.question,
       options: q.options,
       explanation: q.explanation,
-      _answer: q.answer // keep hidden internally
+      _answer: q.answer
     }));
 
     return res.status(200).json({ questions: frontendQuestions });
