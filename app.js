@@ -1,5 +1,5 @@
 /* app.js
-   Single-page UI + AI-quiz via Vercel serverless (no auth)
+   Single-page UI + AI-quiz (no login) using _answer
 */
 
 // ------------------ State ------------------
@@ -61,44 +61,61 @@ generateBtn.onclick = async () => {
 function renderQuestion() {
   const q = state.questions[state.current];
   if (!q) return;
+
   qHeader.textContent = `Question ${state.current + 1} of ${state.questions.length}`;
   qText.textContent = q.question;
   optionsEl.innerHTML = "";
+
   for (const key of Object.keys(q.options)) {
     const div = document.createElement("div");
     div.className = "opt" + (state.answers[state.current] === key ? " selected" : "");
     div.innerHTML = `<strong>${key}.</strong> ${q.options[key]}`;
-    div.onclick = () => { state.answers[state.current] = key; renderQuestion(); };
+    div.onclick = () => { 
+      state.answers[state.current] = key; 
+      renderQuestion(); 
+    };
     optionsEl.appendChild(div);
   }
+
   prevBtn.disabled = state.current === 0;
   nextBtn.disabled = state.current === state.questions.length - 1;
 }
 
 // ------------------ Prev / Next ------------------
-prevBtn.onclick = () => { if (state.current > 0) { state.current--; renderQuestion(); } };
-nextBtn.onclick = () => { if (state.current < state.questions.length - 1) { state.current++; renderQuestion(); } };
+prevBtn.onclick = () => { 
+  if (state.current > 0) { state.current--; renderQuestion(); } 
+};
+nextBtn.onclick = () => { 
+  if (state.current < state.questions.length - 1) { state.current++; renderQuestion(); } 
+};
 
 // ------------------ Finish Quiz ------------------
 finishBtn.onclick = () => {
   if (!state.questions || state.questions.length === 0) return;
+
   let correct = 0;
   const details = [];
+
   state.questions.forEach((q, i) => {
     const chosen = state.answers[i] || null;
-    if (chosen === q.answer) correct++;
-    details.push({ q: q.question, chosen, answer: q.answer, explanation: q.explanation });
+    const isCorrect = chosen === q._answer;
+    if (isCorrect) correct++;
+    details.push({ q: q.question, chosen, answer: q._answer, explanation: q.explanation, isCorrect });
   });
 
   resultsEl.classList.remove("hidden");
   resultsEl.innerHTML = `<h3>Your score: ${correct} / ${state.questions.length}</h3>`;
+
   details.forEach((d, idx) => {
     const el = document.createElement("div");
     el.className = "card";
     el.style.marginTop = "10px";
-    el.innerHTML = `<strong>Q${idx+1}:</strong> ${d.q}
-      <div>Answer: ${d.answer} — Your choice: ${d.chosen || "—"}</div>
-      <div style="margin-top:6px;font-style:italic;color:#bcd">${d.explanation || ""}</div>`;
+    el.innerHTML = `
+      <strong>Q${idx+1}:</strong> ${d.q}
+      <div>Your choice: <strong>${d.chosen || "—"}</strong></div>
+      ${d.isCorrect ? '<div style="color:#4ade80;font-weight:600;">Correct ✅</div>' : `<div style="color:#f87171;font-weight:600;">Correct answer: ${d.answer}</div>`}
+      <div style="margin-top:6px;font-style:italic;color:#cbd5e1;">${d.explanation || ""}</div>
+    `;
     resultsEl.appendChild(el);
   });
 
