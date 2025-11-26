@@ -25,7 +25,7 @@ const resultsEl = document.getElementById("results");
 
 // ------------------ Quiz Generation ------------------
 generateBtn.onclick = async () => {
-  const course = courseSelect.value.split("–")[0].trim(); // e.g., GNS210
+  const course = courseSelect.value.split("–")[0].replace(/\s/g,""); // e.g., GNS210
   const n = Math.max(1, Math.min(20, parseInt(numQ.value || "10")));
 
   generateBtn.disabled = true;
