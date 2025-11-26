@@ -1,14 +1,11 @@
-import OpenAI from "openai";
-
-import OpenAI from "openai";
-
-import OpenAI from "openai";
+// /api/generate-quiz.js
+const OpenAI = require("openai");
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -29,7 +26,7 @@ export default async function handler(req, res) {
         {
           "question": "...",
           "options": {"A":"...","B":"...","C":"...","D":"..."},
-          "answer": "B",        <-- include it here, but frontend should hide it initially
+          "answer": "B",
           "explanation": "Optional hint/explanation"
         }
       ]
@@ -71,4 +68,4 @@ export default async function handler(req, res) {
     console.error("Server error:", err);
     return res.status(500).json({ error: "Server error", detail: err.message });
   }
-}
+};
