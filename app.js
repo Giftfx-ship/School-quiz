@@ -1,5 +1,5 @@
 /* app.js
-   Single-page UI + AI-quiz (no login) using _answer
+   Single-page UI + Quiz (no AI) using _answer
 */
 
 // ------------------ State ------------------
@@ -25,10 +25,11 @@ const resultsEl = document.getElementById("results");
 
 // ------------------ Quiz Generation ------------------
 generateBtn.onclick = async () => {
-  const course = courseSelect.value;
+  const course = courseSelect.value.split("–")[0].trim(); // e.g., GNS210
   const n = Math.max(1, Math.min(20, parseInt(numQ.value || "10")));
+
   generateBtn.disabled = true;
-  generateBtn.textContent = "Generating…";
+  generateBtn.textContent = "Loading…";
 
   try {
     const resp = await fetch("/api/generate-quiz", {
@@ -36,25 +37,28 @@ generateBtn.onclick = async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ course, numQuestions: n })
     });
+
     const data = await resp.json();
+
     if (!data.questions || data.questions.length === 0) {
-      alert("No questions generated. Try again.");
-      generateBtn.disabled = false;
-      generateBtn.textContent = "Generate Quiz (AI)";
+      alert("No questions available for this course.");
       return;
     }
+
     state.questions = data.questions;
     state.current = 0;
     state.answers = {};
+
     renderQuestion();
     quizArea.classList.remove("hidden");
     resultsEl.classList.add("hidden");
+
   } catch (err) {
-    alert("Error generating quiz: " + err.message);
+    alert("Error loading quiz: " + err.message);
   }
 
   generateBtn.disabled = false;
-  generateBtn.textContent = "Generate Quiz (AI)";
+  generateBtn.textContent = "Start Quiz";
 };
 
 // ------------------ Render Question ------------------
@@ -70,9 +74,9 @@ function renderQuestion() {
     const div = document.createElement("div");
     div.className = "opt" + (state.answers[state.current] === key ? " selected" : "");
     div.innerHTML = `<strong>${key}.</strong> ${q.options[key]}`;
-    div.onclick = () => { 
-      state.answers[state.current] = key; 
-      renderQuestion(); 
+    div.onclick = () => {
+      state.answers[state.current] = key;
+      renderQuestion();
     };
     optionsEl.appendChild(div);
   }
@@ -111,9 +115,11 @@ finishBtn.onclick = () => {
     el.className = "card";
     el.style.marginTop = "10px";
     el.innerHTML = `
-      <strong>Q${idx+1}:</strong> ${d.q}
+      <strong>Q${idx + 1}:</strong> ${d.q}
       <div>Your choice: <strong>${d.chosen || "—"}</strong></div>
-      ${d.isCorrect ? '<div style="color:#4ade80;font-weight:600;">Correct ✅</div>' : `<div style="color:#f87171;font-weight:600;">Correct answer: ${d.answer}</div>`}
+      ${d.isCorrect 
+        ? '<div style="color:#4ade80;font-weight:600;">Correct ✅</div>' 
+        : `<div style="color:#f87171;font-weight:600;">Correct answer: ${d.answer}</div>`}
       <div style="margin-top:6px;font-style:italic;color:#cbd5e1;">${d.explanation || ""}</div>
     `;
     resultsEl.appendChild(el);
